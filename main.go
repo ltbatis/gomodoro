@@ -14,7 +14,7 @@ import (
 
 func main() {
 	play_sound("assets/bell.wav")
-	minutes := flag.Int("minutes", 25, "# minutes")
+	minutes := flag.Int("minutes", 22, "# minutes")
 	flag.Parse()
 	pomodoro(*minutes)
 	play_sound("assets/bell.wav")
