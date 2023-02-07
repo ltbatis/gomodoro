@@ -23,7 +23,7 @@ func main() {
 func pomodoro(minutes int) {
 	seconds := minutes * 60
 	ui_bar_and_timer(seconds)
-	fmt.Println("You did!")
+	fmt.Println("Done!")
 }
 
 func play_sound(file string) {
