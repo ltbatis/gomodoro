@@ -35,7 +35,7 @@ func play_sound(file string) {
 
 func ui_bar_and_timer(seconds int) {
 	bar := pb.StartNew(seconds)
-	fmt.Println("- Time to focus!")
+	fmt.Println("- Time to focus!!")
 	for i := 0; i < seconds; i++ {
 		time.Sleep(time.Second * time.Duration(1))
 		bar.Add(1)
