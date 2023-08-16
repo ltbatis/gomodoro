@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"time"
-
 	"os"
 
 	"github.com/cheggaaa/pb/v3"
@@ -12,32 +11,49 @@ import (
 	"github.com/faiface/beep/wav"
 )
 
+const defaultPomodoroMinutes = 22
+const bellSoundPath = "assets/bell.wav"
+
+// main é a entrada principal do programa.
 func main() {
-	play_sound("assets/bell.wav")
-	minutes := flag.Int("minutes", 22, "# minutes")
-	flag.Parse()
-	pomodoro(*minutes)
-	play_sound("assets/bell.wav")
+	minutes := parseCommandLineArguments()
+	playSound(bellSoundPath)
+	startPomodoro(minutes)
+	playSound(bellSoundPath)
 }
 
-func pomodoro(minutes int) {
-	seconds := minutes * 60
-	ui_bar_and_timer(seconds)
+// parseCommandLineArguments analisa os argumentos da linha de comando e retorna os minutos definidos pelo usuário.
+func parseCommandLineArguments() int {
+	minutes := flag.Int("minutes", defaultPomodoroMinutes, "Duration of the pomodoro in minutes")
+	flag.Parse()
+	return *minutes
+}
+
+// startPomodoro executa um ciclo de pomodoro pela duração especificada em minutos.
+func startPomodoro(minutes int) {
+	displayProgressBar(minutes * 60)
 	fmt.Println("Done!")
 }
 
-func play_sound(file string) {
+// playSound reproduz um arquivo de som WAV do caminho fornecido.
+func playSound(file string) {
 	f, _ := os.Open(file)
-	s, format, _ := wav.Decode(f)
+	defer f.Close()
+
+	streamer, format, _ := wav.Decode(f)
+	defer streamer.Close()
+
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	speaker.Play(s)
+	speaker.Play(streamer)
 }
 
-func ui_bar_and_timer(seconds int) {
+// displayProgressBar exibe uma barra de progresso e conta regressivamente a quantidade especificada de segundos.
+func displayProgressBar(seconds int) {
 	bar := pb.StartNew(seconds)
 	fmt.Println("- Time to focus!!")
+	
 	for i := 0; i < seconds; i++ {
-		time.Sleep(time.Second * time.Duration(1))
+		time.Sleep(time.Second)
 		bar.Add(1)
 	}
 	bar.Finish()
